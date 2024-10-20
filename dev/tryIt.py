@@ -445,7 +445,7 @@ def process_and_store_texts(directory):
 
 def get_relevant_passages(query, index, texts, k=5):
     query_embedding = model.encode([query])
-    distances, indices = index.search(query_embedding, k)
+    _, indices = index.search(query_embedding, k)
     results = [texts[idx] for idx in indices[0]]
     return results
 
@@ -454,30 +454,25 @@ def get_relevant_passages(query, index, texts, k=5):
 # Load a T5 model fine-tuned for summarization
 t5_model = T5ForConditionalGeneration.from_pretrained('t5-base')
 t5_tokenizer = T5Tokenizer.from_pretrained('t5-base', legacy=False)
+import torch 
 
-def generate_response(passages, chunk_size=300):
+def generate_response(passages):
     combined_text = " ".join(passages)
-    input_chunks = [combined_text[i:i + chunk_size] for i in range(0, len(combined_text), chunk_size)]
+    input_text = "summarize: " + combined_text
+    input_ids = t5_tokenizer.encode(input_text, return_tensors="pt", max_length=512, truncation=True)
     
-    detailed_response = []
-    for chunk in input_chunks:
-        input_text = "summarize: " + chunk
-        input_ids = t5_tokenizer.encode(input_text, return_tensors="pt", max_length=512, truncation=True)
-        
+    with torch.no_grad():                 # Disable gradient calculation to speed up the process
         summary_ids = t5_model.generate(
             input_ids, 
-            max_length=200,  # Adjust based on desired detail per chunk
-            min_length=50, 
-            length_penalty=1.0, 
+            max_length=150,               # Increase this to make the response longer
+            min_length=50,                # Set a minimum length to avoid very short summaries
+            length_penalty=1.0,           # Lower values like 0.5 can produce longer texts
             num_beams=4, 
             early_stopping=True
         )
-        summary = t5_tokenizer.decode(summary_ids[0], skip_special_tokens=True)
-        detailed_response.append(summary)
     
-    # Combine all the chunk summaries into a single response
-    final_response = " ".join(detailed_response)
-    return final_response
+    summary = t5_tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+    return summary
 
 
 def main():

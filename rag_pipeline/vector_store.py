@@ -1,11 +1,9 @@
 import faiss
 import numpy as np
-from rag_pipeline.models import get_sentence_transformer
 
-model = get_sentence_transformer()
 
-def create_embeddings(text_sections):
-    embeddings = model.encode(text_sections)
+def create_embeddings(text_sections, sentence_transformer):
+    embeddings = sentence_transformer.encode(text_sections)
     return np.array(embeddings)
 
 def store_embeddings_in_faiss(embeddings, text_sections):

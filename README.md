@@ -22,7 +22,12 @@ pip install -r requirements.txt
 Run the pipeline with:
 ```bash
 python main.py
-````
+```
+If it dosen't work, try to run following script (it contains all necessary functions used on the RAG Pipeline) from the dev directory:
+```bash
+cd dev
+python tryIt.py
+``` 
 
 ## Dependecies
 - PyMuPDF
@@ -31,3 +36,5 @@ python main.py
 - transformers
 - torch
 - numpy
+- sentencepiece
+- protobuf
