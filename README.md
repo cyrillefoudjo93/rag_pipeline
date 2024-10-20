@@ -10,3 +10,24 @@ Clone the repository and install the package:
 git clone https://github.com/cyrillefoudjo93/rag_pipeline.git
 cd rag_pipeline
 pip install -e .
+```
+
+Install the necessary packages using:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Usage
+Run the pipeline with:
+```bash
+python main.py
+````
+
+## Dependecies
+- PyMuPDF
+- sentence-transformers
+- faiss-cpu
+- transformers
+- torch
+- numpy
